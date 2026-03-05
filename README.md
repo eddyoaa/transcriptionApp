@@ -28,6 +28,22 @@ Eine React-Native-App, die Sprachgedanken **komplett offline auf dem Handy** auf
 - Schlüssel in **Keychain (iOS)** / **Keystore (Android)**
 - Keine Cloud-Sync-Endpunkte im MVP
 
+## Implementierter Stand
+- React-Native Einstieg mit `App.tsx`, `index.js`, `app.json`
+- Navigation mit 4 Screens: `Record`, `NotesList`, `NoteDetail`, `Settings`
+- Services für Aufnahme, lokale Transkriptions-Bridge (Mock) und Export
+- SQLite-Schema inkl. FTS5 + Trigger sowie Repository-Layer
+- Zustand-Stores für Recording-/Notes-State
+
+## Setup
+```bash
+npm install
+npm run start
+npm run android
+# oder
+npm run ios
+```
+
 ## Empfohlene Projektstruktur
 
 ```text
@@ -62,55 +78,3 @@ transcriptionApp/
   android/
   ios/
 ```
-
-## Lokales Datenmodell (MVP)
-
-### Tabelle `notes`
-- `id TEXT PRIMARY KEY`
-- `title TEXT NOT NULL`
-- `body TEXT NOT NULL`
-- `language TEXT NOT NULL DEFAULT 'de'`
-- `audio_path TEXT NOT NULL`
-- `duration_sec INTEGER NOT NULL`
-- `created_at INTEGER NOT NULL`
-- `updated_at INTEGER NOT NULL`
-
-### Virtuelle Tabelle `notes_fts`
-- FTS5-Index auf `title`, `body`
-- Trigger zum Aktualisieren bei Insert/Update/Delete
-
-## End-to-End Ablauf (Offline)
-1. User tippt auf „Aufnahme starten“.
-2. Audio wird lokal als WAV/M4A gespeichert.
-3. Nach Stop startet lokaler Transkriptions-Job.
-4. Ergebnistext wird in SQLite gespeichert und in FTS indexiert.
-5. User kann Text bearbeiten, suchen und als `.txt/.md` teilen.
-
-## 14-Tage-Plan (praktisch)
-
-### Woche 1
-1. React-Native-Basis + Navigation + Screen-Scaffold
-2. Audioaufnahme zuverlässig auf iOS/Android
-3. SQLite + Migrations + Note CRUD
-4. Whisper.cpp Bridge-Prototyp mit statischem Testaudio
-
-### Woche 2
-1. Aufnahme -> Transkription -> Speichern Pipeline
-2. Notizliste + Detail + Editor
-3. Volltextsuche mit FTS5
-4. Export (Share Sheet)
-5. Hardening: Fehlerszenarien, Abbruch, Retry, Low-Storage
-
-## Definition of Done (MVP)
-- Funktioniert komplett im Flugmodus
-- Keine Netzwerkcalls in Kernpfaden
-- 5-10 Minuten Audio stabil transkribierbar
-- Suche liefert in <200 ms Ergebnisse auf typischem Midrange-Gerät
-- Export von Notizen als Text möglich
-
-## Nächster Schritt
-Wenn du willst, kann ich als Nächstes direkt die initiale Codebasis anlegen:
-- React-Native-Projekt mit TypeScript
-- 4 Screens + Navigation
-- SQLite-Schema + Repository-Layer
-- Mock-Transkriptionsservice als Platzhalter für Whisper.cpp
